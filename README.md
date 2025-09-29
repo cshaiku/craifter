@@ -170,8 +170,8 @@ craifter newsession new_project
 Run `craifter help` for a detailed command reference:
 
 ```
-Craifter - AI-Powered Session and Task Management Tool
-Purpose: Manage tasks, sessions, and commands with AI-assisted organization, persistence, and execution.
+Craifter - Session and Task Management Tool
+Purpose: Manage tasks, sessions, and commands with persistence and execution.
 Commands:
   addtodo <id> <task> [priority]  - Add a new todo item. Priority: low/medium/high (default: medium).
                                   Purpose: Track individual tasks. Example: craifter addtodo fix_bug 'Fix login issue' high
