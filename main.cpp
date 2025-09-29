@@ -6,6 +6,10 @@
 #include <memory>
 #include <algorithm>
 #include <cstdlib>
+#include <map>
+#include <unordered_map>
+
+namespace fs = std::filesystem;
 
 std::string trim(const std::string& s) {
     auto start = s.find_first_not_of(" \t\n\r\f\v");
@@ -14,7 +18,29 @@ std::string trim(const std::string& s) {
     return s.substr(start, end - start + 1);
 }
 
-namespace fs = std::filesystem;
+fs::path getHomeDir() {
+    const char* home = getenv("HOME");
+    if (!home) home = getenv("USERPROFILE");
+    if (home) return fs::path(home);
+    return fs::current_path(); // fallback
+}
+
+std::unordered_map<std::string, std::string> readConfig(const fs::path& configFile) {
+    std::unordered_map<std::string, std::string> config;
+    if (fs::exists(configFile)) {
+        std::ifstream file(configFile);
+        std::string line;
+        while (std::getline(file, line)) {
+            size_t eq = line.find('=');
+            if (eq != std::string::npos) {
+                std::string key = trim(line.substr(0, eq));
+                std::string value = trim(line.substr(eq + 1));
+                config[key] = value;
+            }
+        }
+    }
+    return config;
+}
 
 enum class TaskStatus { pending, in_progress, completed };
 enum class Priority { low, medium, high };
@@ -149,11 +175,11 @@ class AIHelper {
 private:
     TodoList todo_list;
     std::vector<std::unique_ptr<Session>> sessions;
-    fs::path sessions_base = "/root/craifter/sessions";
-    fs::path sessions_file = sessions_base / "sessions.txt";
+    fs::path sessions_base;
+    fs::path sessions_file;
 
 public:
-    AIHelper() {
+    AIHelper(const fs::path& base) : sessions_base(base), sessions_file(sessions_base / "sessions.txt") {
         fs::create_directories(sessions_base);
         loadSessions();
     }
@@ -168,7 +194,7 @@ public:
             std::string line;
             while (std::getline(file, line)) {
                 if (!line.empty() && fs::exists(sessions_base / line)) {
-                    sessions.emplace_back(std::make_unique<Session>(line));
+                    sessions.emplace_back(std::make_unique<Session>(line, sessions_base));
                 }
             }
         }
@@ -284,8 +310,8 @@ private:
     }
 
     void displayHelp() {
-        std::cout << "Craifter - AI-Powered Session and Task Management Tool" << std::endl;
-        std::cout << "Purpose: Manage tasks, sessions, and commands with AI-assisted organization, persistence, and execution." << std::endl;
+        std::cout << "Craifter - Session and Task Management Tool" << std::endl;
+        std::cout << "Purpose: Manage tasks, sessions, and commands with persistence and execution." << std::endl;
         std::cout << "Commands:" << std::endl;
         std::cout << "  addtodo <id> <task> [priority]  - Add a new todo item. Priority: low/medium/high (default: medium)." << std::endl;
         std::cout << "                                  Purpose: Track individual tasks. Example: craifter addtodo fix_bug 'Fix login issue' high" << std::endl;
@@ -307,21 +333,39 @@ private:
         std::cout << "                                  Purpose: Automate session tasks. Example: craifter runproject web_deployment" << std::endl;
         std::cout << "  exit                           - Exit the interactive mode." << std::endl;
         std::cout << "                                  Purpose: Close the tool. Example: craifter exit" << std::endl;
-        std::cout << "Usage: craifter <command> or run interactively." << std::endl;
+        std::cout << "Usage: craifter [--sessions-dir <path>] <command> or run interactively." << std::endl;
+        std::cout << "Config: Set sessions_dir in ~/.craifter/config for persistent path." << std::endl;
     }
 };
 
 
 
 int main(int argc, char* argv[]) {
-    AIHelper helper;
-    if (argc > 1) {
-        // Command-line mode: concatenate args into a single command
-        std::string command;
-        for (int i = 1; i < argc; ++i) {
-            if (i > 1) command += " ";
-            command += argv[i];
+    // Determine sessions base: flag > config > default
+    fs::path sessions_base = getHomeDir() / ".craifter" / "sessions";
+    fs::path config_file = getHomeDir() / ".craifter" / "config";
+    auto config = readConfig(config_file);
+    if (config.count("sessions_dir")) {
+        sessions_base = config["sessions_dir"];
+    }
+
+    // Parse command-line flags
+    std::string command;
+    bool command_mode = false;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--sessions-dir" && i + 1 < argc) {
+            sessions_base = argv[++i];
+        } else {
+            // Collect command args
+            if (!command.empty()) command += " ";
+            command += arg;
+            command_mode = true;
         }
+    }
+
+    AIHelper helper(sessions_base);
+    if (command_mode) {
         helper.executeCommand(command);
     } else {
         // Interactive mode
