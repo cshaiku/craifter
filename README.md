@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An AI-powered command-line tool for managing sessions, commands, and todos. Designed to automate and organize workflows, track tasks, and execute saved commands seamlessly.
+A command-line tool for managing sessions, commands, and todos. Designed to automate and organize workflows, track tasks, and execute saved commands seamlessly.
 
 ## Table of Contents
 - [Purpose](#purpose)
@@ -14,7 +14,6 @@ An AI-powered command-line tool for managing sessions, commands, and todos. Desi
 - [Help Command](#help-command)
 - [Contributing](#contributing)
 - [License](#license)
-- [Disclaimer](Disclaimer)
 
 ## Purpose
 Craifter empowers users to create, manage, and automate command-line tasks through organized "sessions." It combines task tracking (todos) with executable command storage, enabling efficient workflow automation for developers, sysadmins, and productivity enthusiasts. Built with AI assistance in mind, it bridges manual task management and automated execution.
@@ -31,11 +30,106 @@ This project was created to address the need for deeper automation of AI-assiste
 - **Persistence**: Sessions and commands saved to disk for reuse.
 
 ## Installation
-1. Clone the repository: `git clone https://github.com/cshaiku/craifter.git`
-2. Navigate to the directory: `cd craifter`
-3. Compile: `g++ -std=c++17 -o craifter main.cpp`
-4. Install globally: `sudo mv craifter /usr/bin/craifter`
-5. Ensure sessions directory: `mkdir -p /root/craifter/sessions`
+
+### Prerequisites
+- C++17 compatible compiler (e.g., g++ 7+, clang 5+, MSVC 2017+)
+- CMake (optional, for build systems)
+- Standard library with filesystem support
+
+### Linux
+#### Debian/Ubuntu (x86_64)
+```bash
+sudo apt update
+sudo apt install g++ make
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+g++ -std=c++17 -o craifter main.cpp
+sudo mv craifter /usr/bin/craifter
+mkdir -p /root/craifter/sessions
+```
+
+#### Fedora/CentOS/RHEL (x86_64)
+```bash
+sudo dnf install gcc-c++ make  # or yum for older
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+g++ -std=c++17 -o craifter main.cpp
+sudo mv craifter /usr/bin/craifter
+mkdir -p /root/craifter/sessions
+```
+
+#### Arch Linux (x86_64)
+```bash
+sudo pacman -S gcc make
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+g++ -std=c++17 -o craifter main.cpp
+sudo mv craifter /usr/bin/craifter
+mkdir -p /root/craifter/sessions
+```
+
+#### ARM (e.g., Raspberry Pi, ARM64)
+```bash
+# Install compiler (same as above for your distro)
+# For cross-compilation if needed: sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+g++ -std=c++17 -o craifter main.cpp  # Or use aarch64-linux-gnu-g++ for cross
+sudo mv craifter /usr/bin/craifter
+mkdir -p /root/craifter/sessions
+```
+
+### Windows
+#### Using MinGW (GCC)
+1. Install MinGW-w64: Download from https://www.mingw-w64.org/ or use MSYS2.
+2. Open MinGW terminal.
+```bash
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+g++ -std=c++17 -o craifter.exe main.cpp
+# Move to PATH, e.g., C:\Windows\System32\craifter.exe
+# Create sessions dir: mkdir C:\Users\YourUser\craifter\sessions
+```
+
+#### Using Visual Studio
+1. Install Visual Studio with C++ support.
+2. Open Developer Command Prompt.
+```bash
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+cl /std:c++17 main.cpp /Fe:craifter.exe
+# Move to PATH
+# Create sessions dir as above
+```
+
+### macOS
+#### Using Xcode Command Line Tools
+```bash
+xcode-select --install  # Install command line tools
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+clang++ -std=c++17 -o craifter main.cpp
+sudo mv craifter /usr/local/bin/craifter
+mkdir -p /Users/youruser/craifter/sessions  # Adjust path in code if needed
+```
+
+#### Using Homebrew
+```bash
+brew install gcc
+git clone https://github.com/cshaiku/craifter.git
+cd craifter
+g++-11 -std=c++17 -o craifter main.cpp  # Use installed gcc
+sudo mv craifter /usr/local/bin/craifter
+mkdir -p /Users/youruser/craifter/sessions
+```
+
+### Generic/Unknown OS
+1. Ensure a C++17 compiler is installed (check with `g++ --version` or equivalent).
+2. Clone: `git clone https://github.com/cshaiku/craifter.git`
+3. Compile: `g++ -std=c++17 -o craifter main.cpp` (replace `g++` with your compiler, e.g., `clang++`)
+4. Move binary to a directory in your PATH (e.g., `/usr/local/bin/` on Unix-like, or add to PATH on Windows).
+5. Create sessions directory: `mkdir -p /path/to/craifter/sessions` and update the path in `main.cpp` if needed.
+6. If filesystem library issues, ensure your compiler/standard library supports `<filesystem>` (e.g., link with `-lstdc++fs` on older GCC).
 
 ## Usage
 Run Craifter interactively: `craifter`
@@ -70,8 +164,8 @@ craifter newsession new_project
 Run `craifter help` for a detailed command reference:
 
 ```
-Craifter - AI-Powered Session and Task Management Tool
-Purpose: Manage tasks, sessions, and commands with AI-assisted organization, persistence, and execution.
+Craifter - Session and Task Management Tool for AI Clients
+
 Commands:
   addtodo <id> <task> [priority]  - Add a new todo item. Priority: low/medium/high (default: medium).
                                   Purpose: Track individual tasks. Example: craifter addtodo fix_bug 'Fix login issue' high
