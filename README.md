@@ -30,11 +30,11 @@ This project was created to address the need for deeper automation of AI-assiste
 - **Persistence**: Sessions and commands saved to disk for reuse.
 
 ## Installation
-1. Clone the repository: `git clone https://github.com/[your-username]/craifter.git`
+1. Clone the repository: `git clone https://github.com/cshaiku/craifter.git`
 2. Navigate to the directory: `cd craifter`
 3. Compile: `g++ -std=c++17 -o craifter main.cpp`
 4. Install globally: `sudo mv craifter /usr/bin/craifter`
-5. Ensure sessions directory: `mkdir -p /root/craifter/sessions` (or adjust paths in code)
+5. Ensure sessions directory: `mkdir -p /root/craifter/sessions`
 
 ## Usage
 Run Craifter interactively: `craifter`
@@ -100,3 +100,6 @@ Contributions are welcome! Please fork the repo, make changes, and submit a pull
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Disclaimer
+This project was created using Grok and claims no responsibilities for any harm to you from its usage.
