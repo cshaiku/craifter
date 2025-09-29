@@ -14,6 +14,7 @@ An AI-powered command-line tool for managing sessions, commands, and todos. Desi
 - [Help Command](#help-command)
 - [Contributing](#contributing)
 - [License](#license)
+- [Disclaimer](Disclaimer)
 
 ## Purpose
 Craifter empowers users to create, manage, and automate command-line tasks through organized "sessions." It combines task tracking (todos) with executable command storage, enabling efficient workflow automation for developers, sysadmins, and productivity enthusiasts. Built with AI assistance in mind, it bridges manual task management and automated execution.
